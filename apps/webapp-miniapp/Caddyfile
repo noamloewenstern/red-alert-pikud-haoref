@@ -1,0 +1,23 @@
+:{$PORT} {
+	root * /var/www/html
+	encode gzip
+
+	handle /red-alert* {
+		reverse_proxy {$CADDY_BACKEND_URL}
+	}
+
+	handle {
+		root * /var/www/html
+		try_files {path} /index.html
+		file_server
+	}
+
+	log {
+		# output file /var/log/caddy/access.log
+		# format single_field common_log
+		format console
+	}
+
+	# @redalert path /red-alert/*
+	# redir @redalert {$BACKEND_SERVER_URL}{uri}
+}
