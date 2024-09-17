@@ -1,0 +1,8 @@
+packages:
+  # - 'apps/*'
+  - 'packages/*'
+  - 'apps/alerts-listener'
+  - 'apps/bot'
+  - 'apps/webapp-miniapp'
+  - 'apps/webapp-server'
+  - 'apps/clean-db'
