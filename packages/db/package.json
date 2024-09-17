@@ -1,0 +1,48 @@
+{
+  "name": "@red-alert/db",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "main": "dist/index.js",
+  "module": "src/index.ts",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist/**/*"
+  ],
+  "exports": {
+    ".": {
+      "default": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./crud": {
+      "default": "./dist/crud/index.js",
+      "types": "./dist/crud/index.d.ts"
+    },
+    "./schema": {
+      "default": "./dist/schema.js",
+      "types": "./dist/schema.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "rm -rf dist && tsc",
+    "dev": "rm -rf dist && tsc -w",
+    "test": "vitest",
+    "typegen": "npx pocketbase-typegen --env --out ./src/pocketbase-types.ts",
+    "seed": "tsx db/seed.ts"
+  },
+  "devDependencies": {
+    "@types/eventsource": "^1.1.15",
+    "@types/node": "^22.5.5",
+    "typescript": "^5.6.2",
+    "vitest": "^2.1.1"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "envalid": "^8.0.0",
+    "eventsource": "^2.0.2",
+    "p-memoize": "^7.1.1",
+    "pocketbase": "^0.21.5",
+    "quick-lru": "^7.0.0",
+    "zod": "^3.23.8"
+  }
+}
