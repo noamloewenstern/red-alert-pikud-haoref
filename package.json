@@ -3,7 +3,17 @@
   "version": "1.0.0",
   "description": "",
   "type": "module",
-  "scripts": {},
+  "scripts": {
+    "listener": "pnpm --filter @red-alert/alerts-listener",
+    "bot": "pnpm --filter @red-alert/bot",
+    "webapp": "pnpm --filter @red-alert/webapp-miniapp",
+    "webapp-server": "pnpm --filter @red-alert/webapp-server",
+    "common": "pnpm --filter @red-alert/common",
+    "db": "pnpm --filter @red-alert/db",
+    "clean-db": "pnpm --filter @red-alert/clean-db",
+    "lint": "eslint .",
+    "format": "prettier --write ."
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
@@ -17,5 +27,8 @@
     "typescript-eslint": "^8.6.0",
     "vitest": "^2.1.1"
   },
-  "dependencies": {}
+  "dependencies": {
+    "@red-alert/common": "workspace:^",
+    "@red-alert/db": "workspace:^"
+  }
 }

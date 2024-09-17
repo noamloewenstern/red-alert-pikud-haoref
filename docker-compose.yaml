@@ -1,0 +1,74 @@
+services:
+  clean-db:
+    image: red-alert-bot
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: build-apps
+    environment:
+      PACKAGE: clean-db
+      COMMAND: start:tsx
+      NODE_ENV: production
+    env_file:
+      - .env
+      - apps/clean-db/.env
+
+  alerts-listener:
+    image: red-alert-bot
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: build-apps
+    environment:
+      PACKAGE: listener
+      COMMAND: start:tsx
+      NODE_ENV: production
+    env_file:
+      - .env
+      - apps/alerts-listener/.env
+
+  bot:
+    image: red-alert-bot
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: build-apps
+    environment:
+      PACKAGE: bot
+      COMMAND: start:tsx
+      NODE_ENV: production
+    env_file:
+      - .env
+      - apps/bot/.env
+    ports:
+      - 8088:80
+
+  webapp-server:
+    image: red-alert-bot
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: build-apps
+    environment:
+      PACKAGE: webapp-server
+      COMMAND: start:tsx
+      NODE_ENV: production
+      PORT: 8081
+    env_file:
+      - .env
+      - apps/webapp-server/.env
+    ports:
+      - 8081:8081
+
+  webapp:
+    image: webapp-miniapp
+    build:
+      context: .
+      dockerfile: ./apps/webapp-miniapp/Dockerfile
+    volumes:
+      - ./apps/webapp-miniapp/Caddyfile:/etc/caddy/Caddyfile
+    environment:
+      PORT: 80
+      CADDY_BACKEND_URL: http://webapp-server:8081
+    ports:
+      - 8082:80
