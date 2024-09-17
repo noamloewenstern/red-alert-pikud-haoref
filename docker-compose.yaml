@@ -65,8 +65,6 @@ services:
     build:
       context: .
       dockerfile: ./apps/webapp-miniapp/Dockerfile
-    volumes:
-      - ./apps/webapp-miniapp/Caddyfile:/etc/caddy/Caddyfile
     environment:
       PORT: 80
       CADDY_BACKEND_URL: http://webapp-server:8081
