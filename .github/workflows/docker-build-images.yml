@@ -1,0 +1,81 @@
+name: Docker Image CI
+run-name: Build ${{ inputs.branch }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'GitHub branch to create image off.'
+        required: true
+        default: 'main'
+      repo_name:
+        description: 'Name of the ghcr repo.'
+        required: true
+        default: 'red-alert-bot'
+      tag:
+        description: 'Name of the docker tag to create.'
+        required: true
+        default: 'latest'
+      start-url-webhook:
+        description: 'URL to call after workflow is kicked off.'
+        required: false
+        default: ''
+      success-url-webhook:
+        description: 'URL to call after Docker Image got built successfully.'
+        required: false
+        default: ''
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Call Start URL - optionally
+        run: |
+          [[ "${{github.event.inputs.start-url-webhook}}" != "" ]] && curl -v -X POST -d 'url=${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}' ${{github.event.inputs.start-url-webhook}} || echo ""
+        shell: bash
+
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.branch }}
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to ghcr.io
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GHCR_TOKEN }}
+
+      - name: Build and push "apps" image to ghcr.io
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./Dockerfile
+          provenance: false
+          push: true
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          tags: ghcr.io/${{ github.actor }}/${{ github.event.inputs.repo_name }}/apps:${{ github.event.inputs.tag || 'latest' }}
+
+      - name: Build and push "webapp" image to ghcr.io
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./apps/webapp-miniapp/Dockerfile
+          provenance: false
+          push: true
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          tags: ghcr.io/${{ github.actor }}/${{ github.event.inputs.repo_name }}/webapp:${{ github.event.inputs.tag || 'latest' }}
+
+      - name: Call Success URL - optionally
+        run: |
+          [[ "${{github.event.inputs.success-url-webhook}}" != "" ]] && curl -v ${{github.event.inputs.success-url-webhook}} || echo ""
+        shell: bash
