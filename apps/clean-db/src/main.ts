@@ -1,8 +1,10 @@
-import { crud } from '@red-alert/db';
+import { loginAsAdmin, crud } from '@red-alert/db';
 import { env } from './config';
 
 async function main() {
   console.log(`Pruning ${env.DELETE_PER_ITERATION} old alerts...`);
+
+  await loginAsAdmin();
 
   const { deleted, total } = await crud.alerts.pruneOldAlerts({
     alertedOnly: true,
