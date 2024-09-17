@@ -1,0 +1,79 @@
+x-bot-env-vars: &bot-env-vars # all apps need these
+  NODE_ENV: ${NODE_ENV:-production}
+
+  PB_URL: ${PB_URL:-}
+  ADMIN_EMAIL: ${ADMIN_EMAIL:-}
+  ADMIN_PASSWORD: ${ADMIN_PASSWORD:-}
+
+  # only for typegen
+  PB_TYPEGEN_EMAIL: ${PB_TYPEGEN_EMAIL:-}
+  PB_TYPEGEN_PASSWORD: ${PB_TYPEGEN_PASSWORD:-}
+  PB_TYPEGEN_URL: ${PB_TYPEGEN_URL:-}
+
+  # clean-db
+  PRUNE_ALERT_TIMESPAN_MINUTES: ${PRUNE_ALERT_TIMESPAN_MINUTES:-5}
+  DELETE_PER_ITERATION: ${DELETE_PER_ITERATION:-100}
+
+  # alerts-listener
+  API_ID: ${API_ID:-}
+  API_HASH: ${API_HASH:-}
+  SESSION_STRING: ${SESSION_STRING:-}
+  ALERTS_CHANNEL_ID: ${ALERTS_CHANNEL_ID:-}
+
+  # bot
+  BOT_TOKEN: ${BOT_TOKEN:-}
+  WEBHOOK_DOMAIN: ${WEBHOOK_DOMAIN:-}
+  WEBHOOK_PORT: ${WEBHOOK_PORT:-}
+  WEBHOOK_SECRET_TOKEN: ${WEBHOOK_SECRET_TOKEN:-}
+  AUTHOR: ${AUTHOR:-}
+
+  # webapp-server
+
+x-webapp-env-vars: &webapp-env-vars # webapp
+  PORT: ${PORT:-80}
+  CADDY_BACKEND_URL: ${CADDY_BACKEND_URL:-http://webapp-server:8081}
+
+services:
+  clean-db:
+    image: ghcr.io/noamloewenstern/red-alert-bot/apps:latest
+    environment:
+      <<: *bot-env-vars
+      PACKAGE: clean-db
+      COMMAND: start:tsx
+
+  alerts-listener:
+    image: ghcr.io/noamloewenstern/red-alert-bot/apps:latest
+    environment:
+      <<: *bot-env-vars
+      PACKAGE: listener
+      COMMAND: start:tsx
+
+  bot:
+    image: ghcr.io/noamloewenstern/red-alert-bot/apps:latest
+    environment:
+      <<: *bot-env-vars
+      PACKAGE: bot
+      COMMAND: start:tsx
+    ports:
+      - 8088:80
+
+  webapp-server:
+    image: ghcr.io/noamloewenstern/red-alert-bot/apps:latest
+    environment:
+      <<: *bot-env-vars
+      PACKAGE: webapp-server
+      COMMAND: start:tsx
+      PORT: 8081
+    ports:
+      - 8081:8081
+
+  webapp:
+    image: ghcr.io/noamloewenstern/red-alert-bot/webapp:latest
+    depends_on:
+      - webapp-server
+    environment:
+      PORT: 80
+      CADDY_BACKEND_URL: http://webapp-server:8081
+      <<: *webapp-env-vars
+    ports:
+      - 8082:80
