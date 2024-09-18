@@ -10,11 +10,11 @@ import { useInitData } from '@telegram-apps/sdk-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { cities as rawCities } from './cities.data';
 
-import { arraysEqual, dedup } from '@/lib/utils';
+import { arraysEqual, cn, dedup } from '@/lib/utils';
 import { useGetSubscription, useSetCities } from '@/lib/api/cities';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
-const isProd = !!(import.meta.env.PROD || process.env.NODE_ENV === 'production');
+const isProd = import.meta.env.PROD || process.env.NODE_ENV === 'production';
 const isDev = !isProd;
 const devChatId = +(import.meta.env.VITE_DEV_CHAT_ID || '123123123');
 
@@ -108,6 +108,10 @@ export function CitySelectorForm({ chatId }: { chatId: number }) {
         inputRef.current!.value = '';
         inputRef.current!.dispatchEvent(new Event('change'));
       }
+      console.log('focus');
+      console.log('inputRef.current', inputRef.current);
+      inputRef.current!.focus();
+
       setSelectedCities(prev => {
         return [...prev, city];
       });
@@ -158,47 +162,6 @@ export function CitySelectorForm({ chatId }: { chatId: number }) {
   return (
     <div className='space-y-4 w-full'>
       <div className='w-full max-w-2xl mx-auto space-y-4 bg-gray-900 p-6 rounded-lg'>
-        <Title />
-        <div className='flex flex-wrap gap-2'>
-          {selectedCities.map(city => (
-            <Badge
-              key={city.value}
-              variant='secondary'
-              className='bg-gray-700 text-white text-sm py-1 px-2'
-            >
-              {city.label}
-              <X className='ml-1 h-3 w-3 cursor-pointer' onClick={() => handleRemove(city)} />
-            </Badge>
-          ))}
-        </div>
-        <div className='relative' ref={dropdownRef}>
-          <Input
-            ref={inputRef}
-            type='text'
-            placeholder='בחר ערים...'
-            onChange={e => setSearchTerm(e.target.value)}
-            onFocus={() => setIsDropdownOpen(true)}
-            className='w-full bg-gray-800 text-white border-gray-700 focus:border-blue-500'
-          />
-          {isDropdownOpen && (
-            <div className='absolute z-10 w-full mt-1 bg-gray-800 border border-gray-700 rounded-md shadow-lg'>
-              <ScrollArea className='h-64' onScroll={handleScroll}>
-                {visibleCities.map(city => (
-                  <div
-                    key={city.value}
-                    className={`px-4 py-2 cursor-pointer hover:bg-gray-700  text-white`}
-                    onClick={() => handleSelect(city)}
-                  >
-                    {city.label}
-                  </div>
-                ))}
-                {visibleCities.length === 0 && (
-                  <div className='px-4 py-2 text-gray-400'>לא נמצאה התאמה</div>
-                )}
-              </ScrollArea>
-            </div>
-          )}
-        </div>
         <div className='flex justify-between items-center'>
           <div>
             <Button
@@ -220,6 +183,8 @@ export function CitySelectorForm({ chatId }: { chatId: number }) {
               <RotateCcw className='h-4 w-4' />
             </Button>
           </div>
+          <Title />
+
           <LoadingButton
             loading={loading}
             onClick={handleSubmit}
@@ -228,6 +193,59 @@ export function CitySelectorForm({ chatId }: { chatId: number }) {
           >
             שמור
           </LoadingButton>
+        </div>
+
+        <div className='relative' ref={dropdownRef}>
+          <Input
+            ref={inputRef}
+            type='text'
+            placeholder='בחר ערים...'
+            onChange={e => setSearchTerm(e.target.value)}
+            onFocus={() => setIsDropdownOpen(true)}
+            className={cn(
+              'w-full bg-gray-800 text-white border-gray-700 focus:border-blue-500',
+              // 'w-full bg-gray-800 text-white  focus:border-blue-500',
+              isDropdownOpen ? 'border-blue-500' : '',
+            )}
+          />
+
+          {isDropdownOpen && (
+            <div style={{ direction: 'rtl' }}>
+              <div
+                className={cn(
+                  'absolute z-10 mt-1 mx-auto bg-gray-800 border border-gray-700 rounded-md shadow-lg',
+                )}
+              >
+                <ScrollArea className='h-64' onScroll={handleScroll}>
+                  {visibleCities.map(city => (
+                    <div
+                      key={city.value}
+                      className={`px-4 py-2 cursor-pointer hover:bg-gray-700  text-white`}
+                      style={{ direction: 'rtl' }}
+                      onClick={() => handleSelect(city)}
+                    >
+                      {city.label}
+                    </div>
+                  ))}
+                  {visibleCities.length === 0 && (
+                    <div className='px-4 py-2 text-gray-400'>לא נמצאה התאמה</div>
+                  )}
+                </ScrollArea>
+              </div>
+            </div>
+          )}
+          <div className='flex flex-wrap gap-2 mt-2'>
+            {selectedCities.map(city => (
+              <Badge
+                key={city.value}
+                variant='secondary'
+                className='bg-gray-700 text-white text-sm py-1 px-2'
+              >
+                {city.label}
+                <X className='ml-1 h-3 w-3 cursor-pointer' onClick={() => handleRemove(city)} />
+              </Badge>
+            ))}
+          </div>
         </div>
       </div>
     </div>

@@ -24,7 +24,7 @@ function parseRedAlertMessage(message: string) {
 
   const date = datePattern.exec(message)?.groups?.date;
   if (!cities.length || !date) {
-    console.warn('No cities or date found');
+    logger.warn('No cities or date found');
     throw new Error('No cities or date found');
   }
 
@@ -38,7 +38,7 @@ async function onNewMessageHandler(event: NewMessageEvent) {
   try {
     const { cities: citiesNames, date } = parseRedAlertMessage(event.message.text);
     if (!event.message.chatId) {
-      console.warn('No chatId found in message', { text: event.message.text });
+      logger.warn('No chatId found in message', { text: event.message.text });
       return;
     }
     const channelId = event.message.chatId.toString().slice(4);
@@ -46,7 +46,7 @@ async function onNewMessageHandler(event: NewMessageEvent) {
 
     const allNamesValid = citiesNames.every(city => crud.cities.isValidCityName(city));
     if (!allNamesValid) {
-      console.warn('Invalid city names found:', citiesNames);
+      logger.warn('Invalid city names found:', citiesNames);
       return;
     }
     const citiesRecordsIds = await crud.cities.getCitiesRecordsIds(citiesNames);
@@ -56,7 +56,7 @@ async function onNewMessageHandler(event: NewMessageEvent) {
       original_message_url: linkToMessage,
     });
   } catch (e) {
-    console.warn('Error parsing message', e, event.message.text);
+    logger.warn('Error parsing message', e, event.message.text);
     return;
   }
 }
