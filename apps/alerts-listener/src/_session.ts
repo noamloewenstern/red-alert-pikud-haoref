@@ -6,9 +6,8 @@ import { env } from './config';
 
 const apiId = env.API_ID;
 const apiHash = env.API_HASH;
-const sessionString = env.SESSION_STRING;
 
-const stringSession = new StringSession(sessionString);
+const stringSession = new StringSession();
 
 const rl = readline.createInterface({
   input: process.stdin,
@@ -34,7 +33,7 @@ async function authSessionString() {
     onError: err => console.log(err),
   });
   console.log('You should now be connected.');
-  console.log(client.session.save()); // Save this string to avoid logging in again
+  console.log('save -> ', client.session.save()); // Save this string to avoid logging in again
 }
 async function main() {
   await authSessionString();
