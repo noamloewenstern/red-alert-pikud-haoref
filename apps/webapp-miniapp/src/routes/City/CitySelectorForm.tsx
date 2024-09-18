@@ -149,7 +149,7 @@ export function CitySelectorForm({ chatId }: { chatId: number }) {
     [filteredCities],
   );
 
-  const disableButton = useMemo(() => {
+  const disableSubmitButton = useMemo(() => {
     return loading || arraysEqual(selectedCities, initialSelectedCities);
   }, [isLoadingSub, isPending, selectedCities, initialSelectedCities]);
 
@@ -162,13 +162,18 @@ export function CitySelectorForm({ chatId }: { chatId: number }) {
   return (
     <div className='space-y-4 w-full'>
       <div className='w-full max-w-2xl mx-auto space-y-4 bg-gray-900 p-6 rounded-lg'>
+        <Title />
+
         <div className='flex justify-between items-center'>
           <div>
             <Button
               variant='outline'
               size='icon'
               onClick={handleRemoveAll}
-              className='mr-2 bg-gray-800 text-white hover:bg-gray-700'
+              className={cn(
+                'mr-2 bg-gray-800 text-white hover:bg-gray-700',
+                selectedCities.length === 0 ? 'hidden' : '',
+              )}
               title='Remove all selected cities'
             >
               <Trash2 className='h-4 w-4' />
@@ -177,19 +182,24 @@ export function CitySelectorForm({ chatId }: { chatId: number }) {
               variant='outline'
               size='icon'
               onClick={handleCancel}
-              className='bg-gray-800 text-white hover:bg-gray-700'
+              className={cn(
+                'bg-gray-800 text-white hover:bg-gray-700',
+                disableSubmitButton ? 'hidden' : '',
+              )}
               title='Cancel changes'
             >
               <RotateCcw className='h-4 w-4' />
             </Button>
           </div>
-          <Title />
 
           <LoadingButton
             loading={loading}
             onClick={handleSubmit}
-            className='bg-blue-600 text-white hover:bg-blue-700'
-            disabled={disableButton}
+            className={cn(
+              'bg-blue-600 text-white hover:bg-blue-700 h-8',
+              disableSubmitButton ? 'cursor-not-allowed' : '',
+            )}
+            disabled={disableSubmitButton}
           >
             שמור
           </LoadingButton>
@@ -263,8 +273,8 @@ export function AlertDestructive({ description }: { description: string }) {
 
 const Title = () => {
   return (
-    <div className='p-0.5 rounded text-center shadow-md'>
-      <h1 className='text-xl font-bold leading-tight'>בחר ערים לקבלת התרעה אישית</h1>
+    <div className='rounded text-center shadow-md'>
+      <h1 className='text-xl font-bold leading-tight'>בחר ערים להתרעה</h1>
     </div>
   );
 };
