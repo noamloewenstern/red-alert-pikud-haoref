@@ -9,9 +9,13 @@ const bot = new Telegraf(env.BOT_TOKEN);
 
 async function main() {
   bot.command('register', async ctx => {
+    const regLog = `/register | chat.id=${ctx.message.chat.id}`;
+    console.log(`-> ${regLog}`);
     const exists = await crud.subscribers.chatIdExists(ctx.message.chat.id);
     if (exists) {
-      ctx.reply('אתה כבר רשום');
+      const msg = 'אתה כבר רשום';
+      console.log(`<- ${regLog} | ${msg}`);
+      ctx.reply(msg);
       return;
     }
     await crud.subscribers.register({
@@ -20,24 +24,31 @@ async function main() {
       username: ctx.message.from?.username || '',
       cities: [],
     });
-    ctx.reply(
-      'נרשמת בהצלחה\nמעל מנת להירשם להתראות על רשימת ערים, אנא לחץ על התפריט, ויפתח לך דף לרישום לערים',
-    );
+    const msg =
+      'נרשמת בהצלחה\nמעל מנת להירשם להתראות על רשימת ערים, אנא לחץ על התפריט, ויפתח לך דף לרישום לערים';
+    console.log(`-> ${regLog} | ${msg}`);
+    ctx.reply(msg);
   });
 
   bot.command('list', async ctx => {
+    const regLog = `/list | chat.id=${ctx.message.chat.id}`;
     const cities = await crud.subscribers.getCitiesByChatId(ctx.message.chat.id);
     if (!cities.length) {
       const msg =
         'טרם נרשמת לערים מסוימות לקבלת התראות.\nמעל מנת להירשם להתראות על רשימת ערים, אנא לחץ על התפריט, ויפתח לך דף לרישום לערים';
+      console.log(`<- ${regLog} | ${msg}`);
       ctx.reply(msg);
       return;
     }
     const citiesNames = cities.map(city => city.name).join('\n');
+    console.log(`<- ${regLog} | citiesNames.length:${citiesNames.length}`);
     ctx.reply(citiesNames);
   });
+
   bot.command('about', async ctx => {
+    const regLog = `/about | chat.id=${ctx.message.chat.id}`;
     const msg = `בוט התראות צבע אדום\nנועד לאפשר קבלת התראות בהתאמה אישית לפי רשימת ערים שאת/ה בוחר/ת\n\nמפתח: ${env.AUTHOR}`;
+    console.log(`<- ${regLog}`);
     ctx.reply(msg);
   });
 
@@ -53,6 +64,7 @@ async function main() {
   await loginAsAdmin();
   console.log('Registering to alerts');
   registerNotifier((sub, alert) => {
+    console.log(`<> new alert: ${alert.original_message_url}`);
     const msg = `צבע אדום ${alert.date}\n\n${alert.expand.cities.map(c => c.name).join('\n')}\n\nלינק להתרעה המקורית: ${alert.original_message_url}`;
     bot.telegram.sendMessage(sub.chat_id, msg);
   });

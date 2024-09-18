@@ -17,11 +17,15 @@ export const getAllSubscribedToCities = memoize(
 
 export const chatIdExists = memoize(
   async (chatId: Subscriber['chat_id']) => {
-    return (
-      await pb
-        .collection(db.collections.subscribers)
-        .getFirstListItem(`chat_id = ${chatId}`, { fields: 'id,chat_id' })
-    ).id;
+    try {
+      return (
+        await pb
+          .collection(db.collections.subscribers)
+          .getFirstListItem(`chat_id = ${chatId}`, { fields: 'id,chat_id' })
+      ).id;
+    } catch (err) {
+      return false;
+    }
   },
   {
     cache: new QuickLRU({ maxSize: 100, maxAge: 60_000 * 60 }),

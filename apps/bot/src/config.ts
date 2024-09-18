@@ -5,6 +5,6 @@ dotenv.config();
 export const env = cleanEnv(process.env, {
   BOT_TOKEN: str(),
   WEBHOOK_DOMAIN: str(),
-  WEBHOOK_PORT: num({ default: 443 }),
+  WEBHOOK_PORT: num({ default: 80 }),
   AUTHOR: str(),
 });
