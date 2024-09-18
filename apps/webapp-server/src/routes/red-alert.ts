@@ -7,6 +7,7 @@ import { z } from 'zod';
 
 import fs from 'fs';
 import { Subscriber } from '@red-alert/db/schema';
+import { logger } from '@red-alert/common';
 const app = new Hono();
 
 // get sub/chat info
@@ -67,13 +68,13 @@ export const router = app
   )
   .post('/info-log', zValidator('json', z.object({ data: z.object({}) })), async c => {
     const { data } = c.req.valid('json');
-    console.log('data', data);
+    logger.log('data', data);
     function saveBodyToJSONFILE() {
       fs.writeFile('info-log.json', JSON.stringify(data), { encoding: 'utf8' }, err => {
         if (err) {
-          console.log('Error writing file', err);
+          logger.log('Error writing file', err);
         } else {
-          console.log('Successfully wrote file');
+          logger.log('Successfully wrote file');
         }
       });
     }

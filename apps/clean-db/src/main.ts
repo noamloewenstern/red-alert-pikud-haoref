@@ -1,8 +1,9 @@
 import { loginAsAdmin, crud } from '@red-alert/db';
 import { env } from './config';
+import { logger } from '@red-alert/common';
 
 async function main() {
-  console.log(`Pruning ${env.DELETE_PER_ITERATION} old alerts...`);
+  logger.log(`Pruning ${env.DELETE_PER_ITERATION} old alerts...`);
 
   await loginAsAdmin();
 
@@ -13,7 +14,7 @@ async function main() {
     perPage: env.DELETE_PER_ITERATION,
   });
 
-  console.log(`Deleted ${deleted} alerts out of ${total}`);
+  logger.log(`Deleted ${deleted} alerts out of ${total}`);
 }
 
 main();

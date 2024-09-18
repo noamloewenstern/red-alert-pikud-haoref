@@ -58,7 +58,7 @@ export const useSetCities = (chatId: number) => {
       });
     },
     onError: error => {
-      console.log(error);
+      console.error(error);
     },
   });
 };

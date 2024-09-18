@@ -4,6 +4,7 @@ import { StringSession } from 'telegram/sessions';
 
 import { loginAsAdmin, crud } from '@red-alert/db';
 import { env } from './config';
+import { logger } from '@red-alert/common';
 
 function parseRedAlertMessage(message: string) {
   const datePattern = /(?<date>\[[\d\/]+\] [\d\:+]+)/gm;
@@ -65,9 +66,9 @@ const client = new TelegramClient(new StringSession(env.SESSION_STRING), env.API
 });
 
 async function main() {
-  console.log('Loading interactive example...');
+  logger.log('Loading interactive example...');
   await client.connect();
-  console.log('Listening for new messages...');
+  logger.log('Listening for new messages...');
   await loginAsAdmin();
   client.addEventHandler(
     onNewMessageHandler,

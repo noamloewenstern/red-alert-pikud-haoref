@@ -3,7 +3,8 @@ import { cors } from 'hono/cors';
 
 import { router } from './routes/red-alert';
 import { serve } from '@hono/node-server';
-import { logger } from 'hono/logger';
+import { logger as honoLogger } from 'hono/logger';
+import { logger } from '@red-alert/common';
 import { env } from './config/env';
 import { rateLimiter } from 'hono-rate-limiter';
 import { getConnInfo } from '@hono/node-server/conninfo';
@@ -16,7 +17,7 @@ const limiter = rateLimiter({
   keyGenerator: c => getConnInfo(c).remote.address!, // id a client.
 });
 const app = new Hono()
-  .use('*', logger())
+  .use('*', honoLogger())
   .use(limiter)
   .get('/health', c => c.json({ status: 'ok' }))
   .use(
@@ -36,7 +37,7 @@ loginAsAdmin().then(() => {
       port: env.PORT,
     },
     info => {
-      console.log(`Server is running on http://localhost:${info.port}`);
+      logger.log(`Server is running on http://localhost:${info.port}`);
     },
   );
 });

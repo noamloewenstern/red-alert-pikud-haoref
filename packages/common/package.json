@@ -21,6 +21,10 @@
     "./utils/memoize": {
       "default": "./dist/utils/memoize.js",
       "types": "./dist/utils/memoize.d.ts"
+    },
+    "./logger": {
+      "default": "./dist/logger/index.js",
+      "types": "./dist/logger/index.d.ts"
     }
   },
   "scripts": {
