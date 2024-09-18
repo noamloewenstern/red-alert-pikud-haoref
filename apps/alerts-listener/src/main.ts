@@ -34,10 +34,14 @@ function parseRedAlertMessage(message: string) {
 }
 
 async function onNewMessageHandler(event: NewMessageEvent) {
-  // console.debug('New message received', event.message);
   try {
     const { cities: citiesNames, date } = parseRedAlertMessage(event.message.text);
-    const linkToMessage = `https://t.me/c/${env.ALERTS_CHANNEL_ID.slice(4)}/${event.message.id}`;
+    if (!event.message.chatId) {
+      console.warn('No chatId found in message', { text: event.message.text });
+      return;
+    }
+    const channelId = event.message.chatId.toString().slice(4);
+    const linkToMessage = `https://t.me/c/${channelId}/${event.message.id}`;
 
     const allNamesValid = citiesNames.every(city => crud.cities.isValidCityName(city));
     if (!allNamesValid) {
