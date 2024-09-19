@@ -8,8 +8,8 @@ import { registerNotifier } from './notifier';
 const bot = new Telegraf(env.BOT_TOKEN);
 
 async function main() {
-  bot.command('register', async ctx => {
-    const regLog = `/register | chat.id=${ctx.message.chat.id}`;
+  bot.command('start', async ctx => {
+    const regLog = `/start | chat.id=${ctx.message.chat.id}`;
     logger.debug(`-> ${regLog}`);
     const exists = await crud.subscribers.chatIdExists(ctx.message.chat.id);
     if (exists) {
@@ -25,7 +25,7 @@ async function main() {
       cities: [],
     });
     const msg =
-      'נרשמת בהצלחה\nמעל מנת להירשם להתראות על רשימת ערים, אנא לחץ על התפריט, ויפתח לך דף לרישום לערים';
+      'ברוך הבא לבוט צבע אדום לקבלת התרעות ייחודיות לפי בחירה.\nמעל מנת להירשם להתראות על רשימת ערים, אנא לחץ על התפריט, ויפתח לך דף לרישום לערים';
     logger.debug(`-> ${regLog} | ${msg}`);
     ctx.reply(msg);
   });
