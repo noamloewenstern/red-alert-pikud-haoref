@@ -16,6 +16,10 @@ on:
         description: 'Name of the docker tag to create.'
         required: true
         default: 'latest'
+      webhook_coolify:
+        description: 'Coolify webhook to call after workflow is kicked off.'
+        required: false
+        default: 'false'
       start-url-webhook:
         description: 'URL to call after workflow is kicked off.'
         required: false
@@ -31,8 +35,9 @@ jobs:
 
     steps:
       - name: Call Start URL - optionally
+        if: ${{ github.event.inputs.start-url-webhook }} != ""
         run: |
-          [[ "${{github.event.inputs.start-url-webhook}}" != "" ]] && curl -v -X POST -d 'url=${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}' ${{github.event.inputs.start-url-webhook}} || echo ""
+          curl -v -X POST -d 'url=${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}' ${{github.event.inputs.start-url-webhook}} || echo ""
         shell: bash
 
       - name: Checkout
@@ -75,7 +80,14 @@ jobs:
           cache-to: type=gha,mode=max
           tags: ghcr.io/${{ github.actor }}/${{ github.event.inputs.repo_name }}/webapp:${{ github.event.inputs.tag || 'latest' }}
 
-      - name: Call Success URL - optionally
+      - name: Call Coolify Webhook - optionally
+        if: ${{ github.event.inputs.webhook_coolify }} == "true"
         run: |
-          [[ "${{github.event.inputs.success-url-webhook}}" != "" ]] && curl -v ${{github.event.inputs.success-url-webhook}} || echo ""
+          curl --request GET '${{ secrets.COOLIFY_WEBHOOK }}' --header 'Authorization: Bearer ${{ secrets.COOLIFY_TOKEN }}'
+        shell: bash
+
+      - name: Call Success URL - optionally
+        if: success() && ${{ github.event.inputs.success-url-webhook }} != ""
+        run: |
+          curl -v ${{github.event.inputs.success-url-webhook}} || echo ""
         shell: bash
