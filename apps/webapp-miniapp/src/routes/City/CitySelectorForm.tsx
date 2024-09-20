@@ -73,7 +73,10 @@ export function CitySelectorForm({ chatId }: { chatId: number }) {
       })) || []
     );
   }, [sub]);
-  const [selectedCities, setSelectedCities] = useState<City[]>(initialSelectedCities);
+  const [_selectedCities, setSelectedCities] = useState<City[]>(initialSelectedCities);
+  const selectedCities = useMemo(() => {
+    return _selectedCities.sort((a, b) => a.label.localeCompare(b.label));
+  }, [_selectedCities]);
 
   useEffect(() => {
     setSelectedCities(initialSelectedCities);
@@ -230,8 +233,7 @@ export function CitySelectorForm({ chatId }: { chatId: number }) {
                   {visibleCities.map(city => (
                     <div
                       key={city.value}
-                      className={`px-4 py-2 cursor-pointer hover:bg-gray-700  text-white`}
-                      style={{ direction: 'rtl' }}
+                      className={`px-4 py-2 cursor-pointer hover:bg-gray-700  text-white text-right`}
                       onClick={() => handleSelect(city)}
                     >
                       {city.label}
@@ -244,7 +246,7 @@ export function CitySelectorForm({ chatId }: { chatId: number }) {
               </div>
             </div>
           )}
-          <div className='flex flex-wrap gap-2 mt-2'>
+          <div className='flex flex-wrap gap-2 mt-2 flex-row-reverse'>
             {selectedCities.map(city => (
               <Badge
                 key={city.value}
