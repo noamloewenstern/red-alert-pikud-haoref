@@ -3,8 +3,8 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 export const env = cleanEnv(process.env, {
-  API_ID: num(),
-  API_HASH: str(),
-  SESSION_STRING: str(),
-  ALERTS_CHANNEL_ID: str(),
+  TELEGRAM_API_ID: num(),
+  TELEGRAM_API_HASH: str(),
+  TELEGRAM_SESSION_STRING: str(),
+  TELEGRAM_ALERTS_CHANNEL_ID: str(),
 });

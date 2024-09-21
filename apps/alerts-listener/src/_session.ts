@@ -4,8 +4,8 @@ import readline from 'readline';
 
 import { env } from './config';
 
-const apiId = env.API_ID;
-const apiHash = env.API_HASH;
+const apiId = env.TELEGRAM_API_ID;
+const apiHash = env.TELEGRAM_API_HASH;
 
 const stringSession = new StringSession();
 
