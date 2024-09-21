@@ -70,6 +70,17 @@ jobs:
           cache-to: type=gha,mode=max
           tags: ghcr.io/noamloewenstern/red-alert-bot/webapp:${{ github.event.inputs.tag }}
 
+      - name: Build and push "red-alert-bot/pocketbase:${{ github.event.inputs.tag }}" image to ghcr.io
+        uses: docker/build-push-action@v6
+        with:
+          context: ./services/pocketbase/
+          file: ./services/pocketbase/Dockerfile
+          provenance: false
+          push: true
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          tags: ghcr.io/noamloewenstern/red-alert-bot/pocketbase:${{ github.event.inputs.tag }}
+
       - name: Call Coolify Webhook DEV
         if: ${{ github.event.inputs.webhook_coolify_dev }} == "true"
         run: |
