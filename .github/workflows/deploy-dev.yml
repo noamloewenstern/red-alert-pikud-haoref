@@ -1,11 +1,11 @@
-name: Invoke build & deploy Production
-run-name: Invoke build & deploy Production
+name: Invoke build & deploy Dev
+run-name: Invoke build & deploy Dev
 
 on:
   workflow_dispatch:
   push:
     branches:
-      - main
+      - dev
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -27,9 +27,9 @@ jobs:
               workflow_id: 'docker-build-and-deploy.yml',
               ref: 'main',
               inputs: {
-                branch: 'main',
-                tag: 'latest',
-                webhook_coolify_prod: 'true'
+                branch: 'dev',
+                tag: 'dev',
+                webhook_coolify_dev: 'true'
               }
             });
             console.log(result);
