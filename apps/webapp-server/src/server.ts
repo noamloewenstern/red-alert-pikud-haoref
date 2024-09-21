@@ -4,11 +4,13 @@ import { cors } from 'hono/cors';
 import { router } from './routes/red-alert';
 import { serve } from '@hono/node-server';
 import { logger as honoLogger } from 'hono/logger';
-import { logger } from '@red-alert/common';
+import { logger } from '@red-alert/logger';
 import { env } from './config/env';
 import { rateLimiter } from 'hono-rate-limiter';
 import { getConnInfo } from '@hono/node-server/conninfo';
-import { loginAsAdmin } from '@red-alert/db';
+import { DBLogTransport, loginAsAdmin } from '@red-alert/db';
+
+logger.addTransport(new DBLogTransport());
 
 const limiter = rateLimiter({
   windowMs: 15_000 * 60, // 15 minutes
@@ -37,7 +39,7 @@ loginAsAdmin().then(() => {
       port: env.PORT,
     },
     info => {
-      logger.log(`Server is running on http://localhost:${info.port}`);
+      logger.info(`Server is running on http://localhost:${info.port}`);
     },
   );
 });

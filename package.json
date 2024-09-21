@@ -9,6 +9,7 @@
     "webapp": "pnpm --filter @red-alert/webapp-miniapp",
     "webapp-server": "pnpm --filter @red-alert/webapp-server",
     "common": "pnpm --filter @red-alert/common",
+    "logger": "pnpm --filter @red-alert/logger",
     "db": "pnpm --filter @red-alert/db",
     "clean-db": "pnpm --filter @red-alert/clean-db",
     "lint": "eslint .",
@@ -29,6 +30,7 @@
   },
   "dependencies": {
     "@red-alert/common": "workspace:^",
-    "@red-alert/db": "workspace:^"
+    "@red-alert/db": "workspace:^",
+    "@red-alert/logger": "workspace:^"
   }
 }

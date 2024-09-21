@@ -1,4 +1,4 @@
-:{$PORT} {
+:{$WEBAPP_PORT} {
 	root * /var/www/html
 	encode gzip
 

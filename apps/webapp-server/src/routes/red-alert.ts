@@ -2,13 +2,15 @@ import { Hono } from 'hono';
 
 // Apply the rate limiting middleware to all requests.
 import { zValidator } from '@hono/zod-validator';
-import { crud } from '@red-alert/db';
+import { crud, DBLogTransport } from '@red-alert/db';
 import { z } from 'zod';
 
 import fs from 'fs';
 import { Subscriber } from '@red-alert/db/schema';
-import { logger } from '@red-alert/common';
+import { logger } from '@red-alert/logger';
 const app = new Hono();
+
+logger.addTransport(new DBLogTransport());
 
 // get sub/chat info
 export const router = app
@@ -68,13 +70,13 @@ export const router = app
   )
   .post('/info-log', zValidator('json', z.object({ data: z.object({}) })), async c => {
     const { data } = c.req.valid('json');
-    logger.log('data', data);
+    logger.info('data', data);
     function saveBodyToJSONFILE() {
       fs.writeFile('info-log.json', JSON.stringify(data), { encoding: 'utf8' }, err => {
         if (err) {
-          logger.log('Error writing file', err);
+          logger.info('Error writing file', err);
         } else {
-          logger.log('Successfully wrote file');
+          logger.info('Successfully wrote file');
         }
       });
     }

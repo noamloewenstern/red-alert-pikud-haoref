@@ -8,26 +8,18 @@ on:
         description: 'GitHub branch to create image off.'
         required: true
         default: 'main'
-      repo_name:
-        description: 'Name of the ghcr repo.'
-        required: true
-        default: 'red-alert-bot'
       tag:
         description: 'Name of the docker tag to create.'
         required: true
         default: 'latest'
-      webhook_coolify:
-        description: 'Coolify webhook to call after workflow is kicked off.'
+      webhook_coolify_dev:
+        description: 'Dev Coolify webhook after build successfully.'
         required: false
         default: 'false'
-      start-url-webhook:
-        description: 'URL to call after workflow is kicked off.'
+      webhook_coolify_prod:
+        description: 'Prod Coolify webhook after build successfully.'
         required: false
-        default: ''
-      success-url-webhook:
-        description: 'URL to call after Docker Image got built successfully.'
-        required: false
-        default: ''
+        default: 'false'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -38,12 +30,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Call Start URL - optionally
-        if: ${{ github.event.inputs.start-url-webhook }} != ""
-        run: |
-          curl -v -X POST -d 'url=${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}' ${{github.event.inputs.start-url-webhook}} || echo ""
-        shell: bash
-
       - name: Checkout
         uses: actions/checkout@v4
         with:
@@ -71,7 +57,7 @@ jobs:
           push: true
           cache-from: type=gha
           cache-to: type=gha,mode=max
-          tags: ghcr.io/noamloewenstern/${{ github.event.inputs.repo_name }}/apps:${{ github.event.inputs.tag || 'latest' }}
+          tags: ghcr.io/noamloewenstern/red-alert/apps:${{ github.event.inputs.tag || 'latest' }}
 
       - name: Build and push "webapp" image to ghcr.io
         uses: docker/build-push-action@v6
@@ -82,16 +68,16 @@ jobs:
           push: true
           cache-from: type=gha
           cache-to: type=gha,mode=max
-          tags: ghcr.io/noamloewenstern/${{ github.event.inputs.repo_name }}/webapp:${{ github.event.inputs.tag || 'latest' }}
+          tags: ghcr.io/noamloewenstern/red-alert/webapp:${{ github.event.inputs.tag || 'latest' }}
 
-      - name: Call Coolify Webhook - optionally
-        if: ${{ github.event.inputs.webhook_coolify }} == "true"
+      - name: Call Coolify Webhook DEV
+        if: ${{ github.event.inputs.webhook_coolify_dev }} == "true"
         run: |
-          curl --request GET '${{ secrets.COOLIFY_WEBHOOK }}' --header 'Authorization: Bearer ${{ secrets.COOLIFY_TOKEN }}'
+          curl --request GET '${{ secrets.COOLIFY_WEBHOOK_PROD }}' --header 'Authorization: Bearer ${{ secrets.COOLIFY_TOKEN }}'
         shell: bash
 
-      - name: Call Success URL - optionally
-        if: success() && ${{ github.event.inputs.success-url-webhook }} != ""
+      - name: Call Coolify Webhook PROD
+        if: ${{ github.event.inputs.webhook_coolify_prod }} == "true"
         run: |
-          curl -v ${{github.event.inputs.success-url-webhook}} || echo ""
+          curl --request GET '${{ secrets.COOLIFY_WEBHOOK_DEV }}' --header 'Authorization: Bearer ${{ secrets.COOLIFY_TOKEN }}'
         shell: bash

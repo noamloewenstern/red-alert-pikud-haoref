@@ -1,9 +1,10 @@
-import { loginAsAdmin, crud } from '@red-alert/db';
+import { loginAsAdmin, crud, DBLogTransport } from '@red-alert/db';
 import { env } from './config';
-import { logger } from '@red-alert/common';
+import { logger } from '@red-alert/logger';
+logger.addTransport(new DBLogTransport());
 
 async function main() {
-  logger.log(`Pruning ${env.DELETE_PER_ITERATION} old alerts...`);
+  logger.info(`Pruning ${env.DELETE_PER_ITERATION} old alerts...`);
 
   await loginAsAdmin();
 
@@ -14,7 +15,7 @@ async function main() {
     perPage: env.DELETE_PER_ITERATION,
   });
 
-  logger.log(`Deleted ${deleted} alerts out of ${total}`);
+  logger.info(`Deleted ${deleted} alerts out of ${total}`);
 }
 
 main();

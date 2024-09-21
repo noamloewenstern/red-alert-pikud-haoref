@@ -63,10 +63,18 @@ export type SubscriberModel<
   } = { expanded: false },
 > = BaseModel & Subscriber<Opts>;
 
+export const LogSchema = z.object({
+  level: z.string(),
+  text: z.string(),
+  timestamp: z.string().optional(),
+});
+export type Log = z.infer<typeof LogSchema>;
+
 export const db = {
   collections: {
     cities: 'cities',
     subscribers: 'subscribers',
     alerts: 'alerts',
+    logs: 'logs',
   },
 } as const;

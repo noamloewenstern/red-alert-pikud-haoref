@@ -33,11 +33,8 @@ ARG PORT
 ARG CADDY_BACKEND_HOST
 
 # Copy the built application from the previous stage
-COPY --from=frontend /usr/src/webapp/dist /srv
 COPY --from=frontend /usr/src/webapp/dist /var/www/html
 
 # Copy Caddyfile
 COPY ./apps/webapp-miniapp/Caddyfile /etc/caddy/Caddyfile
-RUN caddy fmt --overwrite /etc/caddy/Caddyfile
-
 RUN caddy fmt --overwrite /etc/caddy/Caddyfile
