@@ -44,12 +44,21 @@ async function onNewMessageHandler(event: NewMessageEvent) {
     const channelId = event.message.chatId.toString().slice(4);
     const linkToMessage = `https://t.me/c/${channelId}/${event.message.id}`;
 
-    const allNamesValid = citiesNames.every(city => crud.cities.isValidCityName(city));
-    if (!allNamesValid) {
-      logger.warn('Invalid city names found:', citiesNames);
+    const citiesValidyMap = Object.groupBy(citiesNames, city =>
+      crud.cities.isValidCityName(city) ? 'valid' : 'invalid',
+    );
+    const validNames = citiesValidyMap['valid'] || [];
+    const invalidNamesCities = citiesValidyMap['invalid'] || [];
+
+    if (invalidNamesCities.length) {
+      logger.warn('Invalid cities names:', invalidNamesCities);
+    }
+
+    if (!validNames.length) {
+      logger.warn('No valid cities in message:', citiesNames);
       return;
     }
-    const citiesRecordsIds = await crud.cities.getCitiesRecordsIds(citiesNames);
+    const citiesRecordsIds = await crud.cities.getCitiesRecordsIds(validNames);
     await crud.alerts.newAlert({
       cities: citiesRecordsIds,
       date,
