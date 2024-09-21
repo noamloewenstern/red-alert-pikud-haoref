@@ -70,18 +70,23 @@ async function onNewMessageHandler(event: NewMessageEvent) {
   }
 }
 
-const client = new TelegramClient(new StringSession(env.SESSION_STRING), env.API_ID, env.API_HASH, {
-  connectionRetries: 5,
-});
+const client = new TelegramClient(
+  new StringSession(env.TELEGRAM_SESSION_STRING),
+  env.TELEGRAM_API_ID,
+  env.TELEGRAM_API_HASH,
+  {
+    connectionRetries: 5,
+  },
+);
 
 async function main() {
-  logger.log('Loading interactive example...');
+  logger.info('Loading interactive example...');
   await client.connect();
-  logger.log('Listening for new messages...');
+  logger.info('Listening for new messages...');
   await loginAsAdmin();
   client.addEventHandler(
     onNewMessageHandler,
-    new NewMessage({ chats: env.ALERTS_CHANNEL_ID.split(',') }),
+    new NewMessage({ chats: env.TELEGRAM_ALERTS_CHANNEL_ID.split(',') }),
   );
 }
 
