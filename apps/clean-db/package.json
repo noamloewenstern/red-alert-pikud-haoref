@@ -7,9 +7,7 @@
     "dev": "tsx watch src/main.ts",
     "build:watch": "rm -rf dist && tsc -w",
     "build": "rm -rf dist && tsc",
-    "start:tsx": "tsx src/main.ts",
-    "tsx": "^4.19.1",
-    "start": "node dist/main.js"
+    "start": "tsx src/main.ts"
   },
   "devDependencies": {
     "@types/node": "^22.5.5",

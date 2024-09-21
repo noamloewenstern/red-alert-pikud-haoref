@@ -7,8 +7,7 @@
     "dev": "tsx watch ./src/server.ts",
     "build:watch": "rm -rf dist && tsc -w",
     "build": "rm -rf dist && tsc",
-    "start:tsx": "tsx src/server.ts",
-    "start": "node dist/server.js"
+    "start": "tsx src/server.ts"
   },
   "dependencies": {
     "@hono/node-server": "^1.13.0",
