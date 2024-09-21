@@ -47,7 +47,7 @@ export const router = app
         } as const;
         return c.json(dto);
       } catch (e) {
-        console.warn('Error getting sub', e);
+        logger.warn('Error getting sub', e);
         return c.json({ error: 'INVALID_REQUEST' }, 400);
       }
     },

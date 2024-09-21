@@ -14,9 +14,9 @@ type Logger = winston.Logger & {
 };
 export const logger = winston.createLogger({
   levels,
-  transports: [new winston.transports.Console({ level }), customTransport],
+  level,
+  transports: [new winston.transports.Console(), customTransport],
   format: winston.format.combine(
-    winston.format.colorize(),
     winston.format.timestamp(),
     winston.format.printf(({ timestamp, level, message }) => {
       return `[${timestamp}] ${level}: ${message}`;

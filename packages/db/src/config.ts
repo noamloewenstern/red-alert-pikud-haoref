@@ -16,3 +16,7 @@ export const loginAsAdmin = memoize(async () => {
   console.debug('Logging in as admin to Pocketbase');
   await pb.admins.authWithPassword(env.ADMIN_EMAIL, env.ADMIN_PASSWORD);
 });
+
+export function isLoggedIn() {
+  return pb.authStore.isAdmin || pb.authStore.isAuthRecord;
+}
