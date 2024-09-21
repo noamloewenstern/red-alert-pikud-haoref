@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "@red-alert/db": "workspace:*",
+    "@red-alert/common": "workspace:*",
     "dotenv": "^16.4.5",
     "envalid": "^8.0.0",
     "memoizee": "^0.4.17",
