@@ -184,3 +184,8 @@ webapp-basic
 webapp-trpc
 telegram-mini-app
 TGUI-Example
+
+services/pocketbase/backup/
+services/pocketbase/data/
+
+.env*
