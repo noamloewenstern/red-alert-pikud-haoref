@@ -33,5 +33,7 @@ export function onLog(
 (logger as Logger).addTransport = addTransport;
 
 function addTransport(transport: Transport) {
-  logger.transports.includes(transport) || logger.add(transport);
+  if (!logger.transports.includes(transport)) {
+    logger.add(transport);
+  }
 }

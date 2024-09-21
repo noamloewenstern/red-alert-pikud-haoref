@@ -2,9 +2,11 @@ import { TelegramClient } from 'telegram';
 import { NewMessage, NewMessageEvent } from 'telegram/events';
 import { StringSession } from 'telegram/sessions';
 
-import { loginAsAdmin, crud } from '@red-alert/db';
+import { loginAsAdmin, crud, DBLogTransport } from '@red-alert/db';
 import { env } from './config';
-import { logger } from '@red-alert/common';
+import { logger } from '@red-alert/logger';
+
+logger.addTransport(new DBLogTransport());
 
 function parseRedAlertMessage(message: string) {
   const datePattern = /(?<date>\[[\d\/]+\] [\d\:+]+)/gm;

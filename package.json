@@ -30,6 +30,7 @@
   },
   "dependencies": {
     "@red-alert/common": "workspace:^",
-    "@red-alert/db": "workspace:^"
+    "@red-alert/db": "workspace:^",
+    "@red-alert/logger": "workspace:^"
   }
 }

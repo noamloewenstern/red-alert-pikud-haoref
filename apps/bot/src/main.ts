@@ -1,9 +1,11 @@
 import { Telegraf } from 'telegraf';
 import { createServer } from 'http';
-import { logger } from '@red-alert/common';
+import { logger } from '@red-alert/logger';
 import { env } from './config';
-import { loginAsAdmin, crud } from '@red-alert/db';
+import { loginAsAdmin, crud, DBLogTransport } from '@red-alert/db';
 import { registerNotifier } from './notifier';
+
+logger.addTransport(new DBLogTransport());
 
 const bot = new Telegraf(env.BOT_TOKEN);
 

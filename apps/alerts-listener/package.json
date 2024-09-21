@@ -15,8 +15,9 @@
     "typescript": "^5.6.2"
   },
   "dependencies": {
-    "@red-alert/db": "workspace:*",
     "@red-alert/common": "workspace:*",
+    "@red-alert/db": "workspace:*",
+    "@red-alert/logger": "workspace:^",
     "dotenv": "^16.4.5",
     "envalid": "^8.0.0",
     "memoizee": "^0.4.17",
