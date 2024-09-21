@@ -48,7 +48,7 @@ jobs:
           username: noamloewenstern
           password: ${{ secrets.GHCR_TOKEN }}
 
-      - name: Build and push "apps" image to ghcr.io
+      - name: Build and push "red-alert-bot/apps:${{ github.event.inputs.tag }}" image to ghcr.io
         uses: docker/build-push-action@v6
         with:
           context: .
@@ -57,9 +57,9 @@ jobs:
           push: true
           cache-from: type=gha
           cache-to: type=gha,mode=max
-          tags: ghcr.io/noamloewenstern/red-alert/apps:${{ github.event.inputs.tag || 'latest' }}
+          tags: ghcr.io/noamloewenstern/red-alert-bot/apps:${{ github.event.inputs.tag }}
 
-      - name: Build and push "webapp" image to ghcr.io
+      - name: Build and push "red-alert-bot/webapp:${{ github.event.inputs.tag }}" image to ghcr.io
         uses: docker/build-push-action@v6
         with:
           context: .
@@ -68,7 +68,7 @@ jobs:
           push: true
           cache-from: type=gha
           cache-to: type=gha,mode=max
-          tags: ghcr.io/noamloewenstern/red-alert/webapp:${{ github.event.inputs.tag || 'latest' }}
+          tags: ghcr.io/noamloewenstern/red-alert-bot/webapp:${{ github.event.inputs.tag }}
 
       - name: Call Coolify Webhook DEV
         if: ${{ github.event.inputs.webhook_coolify_dev }} == "true"
