@@ -40,6 +40,8 @@ export const logger = winston.createLogger({
     // debugFormat, // uncomment to see the internal log structure
     winston.format.timestamp(),
     winston.format.label({ label: process.env.SERVICE || 'red-alert-bot' }),
+    winston.format.splat(),
+    winston.format.simple(),
     logLikeFormat,
     // debugFormat, // uncomment to see the internal log structure
     // winston.format.printf(({ timestamp, level, message }) => {
