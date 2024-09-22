@@ -84,11 +84,11 @@ jobs:
       - name: Call Coolify Webhook DEV
         if: ${{ inputs.webhook_coolify_dev == 'true' }}
         run: |
-          curl --request GET '${{ secrets.COOLIFY_WEBHOOK_PROD }}' --header 'Authorization: Bearer ${{ secrets.COOLIFY_TOKEN }}'
+          curl --request GET '${{ secrets.COOLIFY_WEBHOOK_DEV }}' --header 'Authorization: Bearer ${{ secrets.COOLIFY_TOKEN }}'
         shell: bash
 
       - name: Call Coolify Webhook PROD
         if: ${{ inputs.webhook_coolify_prod == 'true' }}
         run: |
-          curl --request GET '${{ secrets.COOLIFY_WEBHOOK_DEV }}' --header 'Authorization: Bearer ${{ secrets.COOLIFY_TOKEN }}'
+          curl --request GET '${{ secrets.COOLIFY_WEBHOOK_PROD }}' --header 'Authorization: Bearer ${{ secrets.COOLIFY_TOKEN }}'
         shell: bash
