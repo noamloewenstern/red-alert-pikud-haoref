@@ -11,21 +11,15 @@ import jsonStringify from 'fast-safe-stringify';
 
 const logLikeFormat = {
   transform(info: any) {
-    const { timestamp, label, message } = info;
-    const level = info[Symbol.for('level')];
+    const { timestamp, label } = info;
     const args = info[Symbol.for('splat')];
-    const strArgs = args.map(jsonStringify).join(' ');
-    info[Symbol.for('message')] = `${timestamp} [${label}] ${level}: ${message} ${strArgs}`;
+    const formatedMessage = info[Symbol.for('message')];
+    const strArgs = (args || []).map(jsonStringify).join(' ');
+    const sufixMsg = args ? ` ${strArgs}` : '';
+    info[Symbol.for('message')] = `${timestamp} [${label}] ${formatedMessage}${sufixMsg}`;
     return info;
   },
 };
-
-// const debugFormat = {
-//   transform(info: any) {
-//     console.log(info);
-//     return info;
-//   },
-// };
 
 const customTransport = new CustomTransport({ level });
 
@@ -37,16 +31,10 @@ export const logger = winston.createLogger({
   level,
   transports: [new winston.transports.Console(), customTransport],
   format: winston.format.combine(
-    // debugFormat, // uncomment to see the internal log structure
-    winston.format.timestamp(),
-    winston.format.label({ label: process.env.SERVICE || 'red-alert-bot' }),
-    winston.format.splat(),
     winston.format.simple(),
+    winston.format.label({ label: process.env.SERVICE || 'red-alert-bot' }),
+    winston.format.timestamp(),
     logLikeFormat,
-    // debugFormat, // uncomment to see the internal log structure
-    // winston.format.printf(({ timestamp, level, message }) => {
-    //   return `[${timestamp}] ${level}: ${message}`;
-    // }),
   ),
 }) as Logger;
 

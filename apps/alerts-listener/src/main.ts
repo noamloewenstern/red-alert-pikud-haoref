@@ -83,7 +83,6 @@ const client = new TelegramClient(
 
 async function main() {
   await loginAsAdmin();
-  logger.info('Loading interactive example...');
   await client.connect();
   logger.info('Listening for new messages...');
   client.addEventHandler(
