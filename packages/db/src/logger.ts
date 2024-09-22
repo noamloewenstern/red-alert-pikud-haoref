@@ -16,9 +16,6 @@ export class PocketbaseTransport extends Transport {
       });
       return;
     }
-    setImmediate(() => {
-      this.emit('logged', info);
-    });
 
     const { level, timestamp, message } = info;
     crudLogger.log(level, message, timestamp).then(() => callback?.());
