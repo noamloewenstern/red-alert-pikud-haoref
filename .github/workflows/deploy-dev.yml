@@ -25,7 +25,7 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               workflow_id: 'docker-build-and-deploy.yml',
-              ref: 'main',
+              ref: 'dev',
               inputs: {
                 branch: 'dev',
                 tag: 'dev',
