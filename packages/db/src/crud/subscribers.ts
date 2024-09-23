@@ -6,9 +6,10 @@ import memoize from '@red-alert/common/utils/memoize';
 
 export const getAllSubscribedToCities = memoize(
   async (citiesIds: string[]) => {
-    return await pb
-      .collection(db.collections.subscribers)
-      .getFullList<Subscriber>({ filter: citiesIds.map(id => `cities ~ "${id}"`).join(' || ') });
+    return await pb.collection(db.collections.subscribers).getFullList<Subscriber>({
+      filter: citiesIds.map(id => `cities ~ "${id}"`).join(' || '),
+      requestKey: null,
+    });
   },
   {
     cache: new QuickLRU({ maxSize: 10, maxAge: 10_000 }),
@@ -21,7 +22,7 @@ export const chatIdExists = memoize(
       return (
         await pb
           .collection(db.collections.subscribers)
-          .getFirstListItem(`chat_id = ${chatId}`, { fields: 'id,chat_id' })
+          .getFirstListItem(`chat_id = ${chatId}`, { fields: 'id,chat_id', requestKey: null })
       ).id;
     } catch (err) {
       return false;
@@ -35,7 +36,9 @@ export const chatIdExists = memoize(
 
 export const getSub = memoize(
   async (subId: string, options?: RecordOptions) => {
-    return await pb.collection(db.collections.subscribers).getOne(subId, options);
+    return await pb
+      .collection(db.collections.subscribers)
+      .getOne(subId, { ...options, requestKey: null });
   },
   {
     cache: new QuickLRU({ maxSize: 10, maxAge: 200 }),
@@ -45,7 +48,7 @@ export const getSubByChatId = memoize(
   async (chatId: Subscriber['chat_id'], options?: RecordOptions) => {
     return await pb
       .collection(db.collections.subscribers)
-      .getFirstListItem(`chat_id = ${chatId}`, options);
+      .getFirstListItem(`chat_id = ${chatId}`, { ...options, requestKey: null });
   },
   {
     cache: new QuickLRU({ maxSize: 10, maxAge: 200 }),
@@ -54,14 +57,16 @@ export const getSubByChatId = memoize(
 
 export const setCitiesByChatId = async (chatId: Subscriber['chat_id'], citiesIds: string[]) => {
   const sub = await getSubByChatId(chatId);
-  await pb.collection(db.collections.subscribers).update(sub.id, { cities: citiesIds });
+  await pb
+    .collection(db.collections.subscribers)
+    .update(sub.id, { cities: citiesIds }, { requestKey: null });
 };
 
 export const register = async (sub: Subscriber) => {
   if (await chatIdExists(sub.chat_id)) {
     return;
   }
-  return await pb.collection(db.collections.subscribers).create(sub);
+  return await pb.collection(db.collections.subscribers).create(sub, { requestKey: null });
 };
 
 export const updateCities = async (chatId: Subscriber['chat_id'], cities: City[]) => {
@@ -69,7 +74,7 @@ export const updateCities = async (chatId: Subscriber['chat_id'], cities: City[]
     return;
   }
   const sub = await getSubByChatId(chatId);
-  await pb.collection(db.collections.subscribers).update(sub.id, { cities });
+  await pb.collection(db.collections.subscribers).update(sub.id, { cities }, { requestKey: null });
 };
 
 export const getCitiesByChatId = memoize(
@@ -78,7 +83,7 @@ export const getCitiesByChatId = memoize(
       .collection(db.collections.subscribers)
       .getFirstListItem<
         SubscriberModel<{ expanded: true }>
-      >(`chat_id = ${chatId}`, { expand: 'cities' });
+      >(`chat_id = ${chatId}`, { expand: 'cities', requestKey: null });
     return sub.expand.cities;
   },
   {

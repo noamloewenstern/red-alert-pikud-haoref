@@ -12,7 +12,9 @@ export async function pruneOldAlerts({
   if (alertedOnly) {
     filter += ' && alerted_subscribers = true';
   }
-  const oldAlerts = await pb.collection(db.collections.alerts).getList(page, perPage, { filter });
+  const oldAlerts = await pb
+    .collection(db.collections.alerts)
+    .getList(page, perPage, { filter, requestKey: null });
   for (const alert of oldAlerts.items) {
     await deleteAlert(alert.id);
   }
@@ -23,10 +25,10 @@ export async function pruneOldAlerts({
 }
 
 export async function deleteAlert(recordId: string) {
-  return pb.collection(db.collections.alerts).delete(recordId);
+  return pb.collection(db.collections.alerts).delete(recordId, { requestKey: null });
 }
 export async function newAlert(alert: Alert) {
-  return pb.collection(db.collections.alerts).create(alert);
+  return pb.collection(db.collections.alerts).create(alert, { requestKey: null });
 }
 
 export async function subscribeToNewCreatedAlerts(
@@ -38,10 +40,12 @@ export async function subscribeToNewCreatedAlerts(
       if (e.action !== 'create') return;
       callback(e.record);
     },
-    { expand: 'cities' },
+    { expand: 'cities', requestKey: null },
   );
 }
 
 export async function setAlertedSubscribers(alertId: string) {
-  return pb.collection(db.collections.alerts).update(alertId, { alerted_subscribers: true });
+  return pb
+    .collection(db.collections.alerts)
+    .update(alertId, { alerted_subscribers: true }, { requestKey: null });
 }
