@@ -10,6 +10,8 @@ logger.addTransport(new DBLogTransport());
 const bot = new Telegraf(env.BOT_TOKEN);
 
 async function main() {
+  await loginAsAdmin();
+
   bot.command('start', async ctx => {
     const regLog = `/start | chat.id=${ctx.message.chat.id}`;
     logger.debug(`-> ${regLog}`);
@@ -71,7 +73,6 @@ async function main() {
     },
   );
 
-  await loginAsAdmin();
   logger.debug('Registering to alerts');
   registerNotifier((sub, alert) => {
     logger.debug(`<> new alert: ${alert.original_message_url}`);

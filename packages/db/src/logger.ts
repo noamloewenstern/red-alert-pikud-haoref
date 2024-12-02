@@ -6,19 +6,16 @@ export class PocketbaseTransport extends Transport {
   private autoLogin: boolean;
   constructor(options?: Transport.TransportStreamOptions & { autoLogin?: boolean }) {
     super(options);
-    this.autoLogin = !!(options?.autoLogin ?? true);
+    this.autoLogin = !!(options?.autoLogin || false);
   }
 
   log(info: any, callback: any) {
-    if (!pb.authStore.isAdmin && this.autoLogin) {
+    if (this.autoLogin && !pb.authStore.isAdmin) {
       loginAsAdmin().then(() => {
         this.log(info, callback);
       });
       return;
     }
-    setImmediate(() => {
-      this.emit('logged', info);
-    });
 
     const { level, timestamp, message } = info;
     crudLogger.log(level, message, timestamp).then(() => callback?.());

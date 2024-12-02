@@ -33,7 +33,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.inputs.branch }}
+          ref: ${{ inputs.branch }}
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
@@ -48,7 +48,7 @@ jobs:
           username: noamloewenstern
           password: ${{ secrets.GHCR_TOKEN }}
 
-      - name: Build and push "red-alert-bot/apps:${{ github.event.inputs.tag }}" image to ghcr.io
+      - name: Build and push "red-alert-bot/apps:${{ inputs.tag }}" image to ghcr.io
         uses: docker/build-push-action@v6
         with:
           context: .
@@ -57,9 +57,9 @@ jobs:
           push: true
           cache-from: type=gha
           cache-to: type=gha,mode=max
-          tags: ghcr.io/noamloewenstern/red-alert-bot/apps:${{ github.event.inputs.tag }}
+          tags: ghcr.io/noamloewenstern/red-alert-bot/apps:${{ inputs.tag }}
 
-      - name: Build and push "red-alert-bot/webapp:${{ github.event.inputs.tag }}" image to ghcr.io
+      - name: Build and push "red-alert-bot/webapp:${{ inputs.tag }}" image to ghcr.io
         uses: docker/build-push-action@v6
         with:
           context: .
@@ -68,9 +68,9 @@ jobs:
           push: true
           cache-from: type=gha
           cache-to: type=gha,mode=max
-          tags: ghcr.io/noamloewenstern/red-alert-bot/webapp:${{ github.event.inputs.tag }}
+          tags: ghcr.io/noamloewenstern/red-alert-bot/webapp:${{ inputs.tag }}
 
-      - name: Build and push "red-alert-bot/pocketbase:${{ github.event.inputs.tag }}" image to ghcr.io
+      - name: Build and push "red-alert-bot/pocketbase:${{ inputs.tag }}" image to ghcr.io
         uses: docker/build-push-action@v6
         with:
           context: ./services/pocketbase/
@@ -79,16 +79,16 @@ jobs:
           push: true
           cache-from: type=gha
           cache-to: type=gha,mode=max
-          tags: ghcr.io/noamloewenstern/red-alert-bot/pocketbase:${{ github.event.inputs.tag }}
+          tags: ghcr.io/noamloewenstern/red-alert-bot/pocketbase:${{ inputs.tag }}
 
       - name: Call Coolify Webhook DEV
-        if: ${{ github.event.inputs.webhook_coolify_dev }} == "true"
+        if: ${{ inputs.webhook_coolify_dev == 'true' }}
         run: |
-          curl --request GET '${{ secrets.COOLIFY_WEBHOOK_PROD }}' --header 'Authorization: Bearer ${{ secrets.COOLIFY_TOKEN }}'
+          curl --request GET '${{ secrets.COOLIFY_WEBHOOK_DEV }}' --header 'Authorization: Bearer ${{ secrets.COOLIFY_TOKEN }}'
         shell: bash
 
       - name: Call Coolify Webhook PROD
-        if: ${{ github.event.inputs.webhook_coolify_prod }} == "true"
+        if: ${{ inputs.webhook_coolify_prod == 'true' }}
         run: |
-          curl --request GET '${{ secrets.COOLIFY_WEBHOOK_DEV }}' --header 'Authorization: Bearer ${{ secrets.COOLIFY_TOKEN }}'
+          curl --request GET '${{ secrets.COOLIFY_WEBHOOK_PROD }}' --header 'Authorization: Bearer ${{ secrets.COOLIFY_TOKEN }}'
         shell: bash

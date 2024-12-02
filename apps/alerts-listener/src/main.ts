@@ -82,10 +82,9 @@ const client = new TelegramClient(
 );
 
 async function main() {
-  logger.info('Loading interactive example...');
+  await loginAsAdmin();
   await client.connect();
   logger.info('Listening for new messages...');
-  await loginAsAdmin();
   client.addEventHandler(
     onNewMessageHandler,
     new NewMessage({ chats: env.TELEGRAM_ALERTS_CHANNEL_ID.split(',') }),

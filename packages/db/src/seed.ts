@@ -13,7 +13,7 @@ async function seedCities() {
 
   for (const city of needToSeed) {
     try {
-      await pb.collection(db.collections.cities).create(city);
+      await pb.collection(db.collections.cities).create(city, { requestKey: null });
     } catch (e) {
       console.error('Error seeding city: ', city, e);
     }

@@ -7,6 +7,20 @@ const levels = winston.config.npm.levels;
 const envLevel = process.env.LOG_LEVEL?.toLowerCase() || 'info';
 const level = Object.keys(levels).includes(envLevel) ? envLevel : 'info';
 
+import jsonStringify from 'fast-safe-stringify';
+
+const logLikeFormat = {
+  transform(info: any) {
+    const { timestamp, label } = info;
+    const args = info[Symbol.for('splat')];
+    const formatedMessage = info[Symbol.for('message')];
+    const strArgs = (args || []).map(jsonStringify).join(' ');
+    const sufixMsg = args ? ` ${strArgs}` : '';
+    info[Symbol.for('message')] = `${timestamp} [${label}] ${formatedMessage}${sufixMsg}`;
+    return info;
+  },
+};
+
 const customTransport = new CustomTransport({ level });
 
 type Logger = winston.Logger & {
@@ -17,10 +31,10 @@ export const logger = winston.createLogger({
   level,
   transports: [new winston.transports.Console(), customTransport],
   format: winston.format.combine(
+    winston.format.simple(),
+    winston.format.label({ label: process.env.SERVICE || 'red-alert-bot' }),
     winston.format.timestamp(),
-    winston.format.printf(({ timestamp, level, message }) => {
-      return `[${timestamp}] ${level}: ${message}`;
-    }),
+    logLikeFormat,
   ),
 }) as Logger;
 
