@@ -1,0 +1,45 @@
+name: Retag Docker Images from dev to latest
+
+on:
+  workflow_dispatch:
+    inputs:
+      webhook_coolify_prod:
+        description: 'Prod Coolify webhook after re-tagging.'
+        required: false
+        default: 'false'
+
+jobs:
+  retag:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Login to ghcr.io
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: noamloewenstern
+          password: ${{ secrets.GHCR_TOKEN }}
+
+      # Step to retag existing dev images as latest
+      - name: Retag and push images from dev to latest
+        run: |
+          # List of images to retag
+          images=(
+            "ghcr.io/noamloewenstern/red-alert-bot/apps"
+            "ghcr.io/noamloewenstern/red-alert-bot/webapp"
+            "ghcr.io/noamloewenstern/red-alert-bot/pocketbase"
+          )
+
+          # Loop through the images and retag each from dev to latest
+          for image in "${images[@]}"; do
+            echo "Retagging $image:dev to $image:latest"
+            docker pull $image:dev
+            docker tag $image:dev $image:latest
+            docker push $image:latest
+          done
+
+      - name: Call Coolify Webhook PROD
+        if: ${{ inputs.webhook_coolify_prod == 'true' }}
+        run: |
+          curl --request GET '${{ secrets.COOLIFY_WEBHOOK_PROD }}' --header 'Authorization: Bearer ${{ secrets.COOLIFY_TOKEN }}'
+        shell: bash
