@@ -34,6 +34,8 @@ x-webapp-env-vars: &webapp-env-vars # webapp
 services:
   alerts-listener:
     image: ghcr.io/noamloewenstern/red-alert-bot/apps:${IMAGE_VERSION}
+    depends_on:
+      - pb
     build:
       context: $PWD
       dockerfile: Dockerfile
@@ -42,10 +44,12 @@ services:
       <<: *bot-env-vars
       PACKAGE: listener
       COMMAND: start
-    restart: on-failure:3
+    restart: unless-stopped
 
   bot:
     image: ghcr.io/noamloewenstern/red-alert-bot/apps:${IMAGE_VERSION}
+    depends_on:
+      - pb
     environment:
       PACKAGE: bot
       COMMAND: start
@@ -56,6 +60,8 @@ services:
 
   webapp-server:
     image: ghcr.io/noamloewenstern/red-alert-bot/apps:${IMAGE_VERSION}
+    depends_on:
+      - pb
     environment:
       <<: *bot-env-vars
       PACKAGE: webapp-server
@@ -78,12 +84,10 @@ services:
 
   pb:
     image: ghcr.io/noamloewenstern/red-alert-bot/pocketbase:${IMAGE_VERSION}
-    command: ['/pb/pocketbase', 'serve', '--http=0.0.0.0:9098']
+    command: ['/pb/pocketbase', 'serve', '--http=0.0.0.0:${POCKETBASE_PORT}']
     ports:
-      - 9098
+      - ${POCKETBASE_PORT}
     volumes:
-      - pb_data:/pb/pb_data
+      - $PWD/services/pocketbase/data:/pb/pb_data
+      - $PWD/services/pocketbase/pb_migrations:/pb/pb_migrations
     restart: unless-stopped
-
-volumes:
-  pb_data:
