@@ -28,11 +28,11 @@
     "dev": "rm -rf dist && tsc -w"
   },
   "devDependencies": {
-    "@types/node": "^22.5.5",
-    "typescript": "^5.6.2"
+    "@types/node": "^22.10.1",
+    "typescript": "^5.7.2"
   },
   "dependencies": {
     "mimic-fn": "^5.0.0",
-    "type-fest": "^4.26.1"
+    "type-fest": "^4.30.0"
   }
 }

@@ -10,28 +10,28 @@
     "start": "tsx src/server.ts"
   },
   "dependencies": {
-    "@hono/node-server": "^1.13.0",
-    "@hono/zod-validator": "^0.2.2",
+    "@hono/node-server": "^1.13.7",
+    "@hono/zod-validator": "^0.4.1",
     "@red-alert/db": "workspace:^",
     "@red-alert/common": "workspace:^",
     "@type-cacheable/core": "^14.1.0",
     "@type-cacheable/lru-cache-adapter": "^18.0.0",
-    "axios": "^1.7.7",
+    "axios": "^1.7.8",
     "baserow-client": "^0.3.0",
     "cross-env": "^7.0.3",
-    "dotenv": "^16.4.5",
+    "dotenv": "^16.4.7",
     "envalid": "^8.0.0",
-    "hono": "^4.6.1",
+    "hono": "^4.6.12",
     "hono-rate-limiter": "^0.4.0",
     "ky": "^1.7.2",
-    "lru-cache": "^11.0.1",
+    "lru-cache": "^11.0.2",
     "zod": "^3.23.8"
   },
   "devDependencies": {
-    "@hono/vite-dev-server": "^0.16.0",
-    "@types/node": "^22.5.5",
-    "tsx": "^4.19.1",
-    "typescript": "^5.6.2",
-    "vite": "^5.4.6"
+    "@hono/vite-dev-server": "^0.17.0",
+    "@types/node": "^22.10.1",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2",
+    "vite": "^6.0.2"
   }
 }
