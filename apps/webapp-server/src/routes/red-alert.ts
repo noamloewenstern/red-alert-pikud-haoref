@@ -47,7 +47,7 @@ export const router = app
         } as const;
         return c.json(dto);
       } catch (e) {
-        logger.warn({ chatId, msg: `Error getting sub ${e}` });
+        logger.warn(JSON.stringify({ chatId, msg: `Error getting sub ${e}` }));
         return c.json({ error: 'INVALID_REQUEST' }, 400);
       }
     },
