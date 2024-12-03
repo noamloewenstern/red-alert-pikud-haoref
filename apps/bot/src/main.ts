@@ -15,7 +15,10 @@ async function main() {
   bot.command('start', async ctx => {
     const regLog = `/start | chat.id=${ctx.message.chat.id}`;
     logger.debug(`-> ${regLog}`);
-    const exists = await crud.subscribers.chatIdExists(ctx.message.chat.id);
+
+    const exists = await crud.subscribers.chatIdExists(ctx.message.chat.id).catch(e => {
+      logger.warn(`crud.subscribers.chatIdExists Error - shouldn't happen ${regLog} | Error:${e}`);
+    });
     if (exists) {
       const msg = 'אתה כבר רשום';
       logger.debug(`<- ${regLog} | ${msg}`);
