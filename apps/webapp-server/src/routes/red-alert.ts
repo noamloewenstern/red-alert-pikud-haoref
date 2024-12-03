@@ -41,13 +41,13 @@ export const router = app
         }
         const dto = {
           chat_id: sub.chat_id,
-          username: 'NoamLoewenstern',
-          fullname: 'N L',
+          username: sub.username,
+          fullname: sub.fullname,
           expand: sub.expand as Subscriber<{ expanded: true }>['expand'],
         } as const;
         return c.json(dto);
       } catch (e) {
-        logger.warn('Error getting sub', e);
+        logger.warn({ chatId, msg: `Error getting sub ${e}` });
         return c.json({ error: 'INVALID_REQUEST' }, 400);
       }
     },
