@@ -41,7 +41,7 @@ export const getSub = memoize(
       .getOne(subId, { ...options, requestKey: null });
   },
   {
-    cache: new QuickLRU({ maxSize: 10, maxAge: 200 }),
+    cache: new QuickLRU({ maxSize: 10, maxAge: 2_000 }),
   },
 );
 export const getSubByChatId = memoize(
@@ -51,7 +51,7 @@ export const getSubByChatId = memoize(
       .getFirstListItem(`chat_id = ${chatId}`, { ...options, requestKey: null });
   },
   {
-    cache: new QuickLRU({ maxSize: 10, maxAge: 200 }),
+    cache: new QuickLRU({ maxSize: 10, maxAge: 2_000 }),
   },
 );
 
@@ -87,6 +87,6 @@ export const getCitiesByChatId = memoize(
     return sub.expand.cities;
   },
   {
-    cache: new QuickLRU({ maxSize: 10, maxAge: 300 }),
+    cache: new QuickLRU({ maxSize: 10, maxAge: 5_000 }),
   },
 );
