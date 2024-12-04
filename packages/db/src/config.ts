@@ -14,7 +14,7 @@ export const env = cleanEnv(process.env, {
 export const pb = new PocketBase(env.PB_URL);
 export const loginAsAdmin = memoize(async () => {
   console.debug('Logging in as admin to Pocketbase: ', env.PB_URL);
-  await pb.admins.authWithPassword(env.ADMIN_EMAIL, env.ADMIN_PASSWORD);
+  await pb.collection('_superusers').authWithPassword(env.ADMIN_EMAIL, env.ADMIN_PASSWORD);
   console.debug('Logged in to Pocketbase');
 });
 
