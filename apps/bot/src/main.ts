@@ -13,32 +13,45 @@ async function main() {
   await loginAsAdmin();
 
   bot.command('start', async ctx => {
-    const regLog = `/start | chat.id=${ctx.message.chat.id}`;
-    logger.debug(`-> ${regLog}`);
-    const exists = await crud.subscribers.chatIdExists(ctx.message.chat.id);
-    if (exists) {
-      const msg = 'אתה כבר רשום';
-      logger.debug(`<- ${regLog} | ${msg}`);
+    try {
+      const chatId = ctx.message.chat.id;
+      const from = ctx.message.from;
+
+      const regLog = `/start | chatId=${chatId}`;
+      logger.debug(`-> ${regLog}`);
+
+      const exists = await crud.subscribers.chatIdExists(chatId);
+      if (exists) {
+        const msg = 'אתה כבר רשום';
+        logger.debug(`<- ${regLog} | ${msg}`);
+        ctx.reply(msg);
+        return;
+      }
+      logger.debug(`Registering chatId=${chatId}`);
+      await crud.subscribers.register({
+        chat_id: chatId,
+        fullname: `${from?.first_name || ''} ${from?.last_name || ''}`,
+        username: from?.username || '',
+        cities: [],
+      });
+      logger.debug(`Registered chatId=${chatId}`);
+
+      const msg =
+        'ברוך הבא לבוט צבע אדום לקבלת התרעות ייחודיות לפי בחירה.\nמעל מנת להירשם להתראות על רשימת ערים, אנא לחץ על התפריט, ויפתח לך דף לרישום לערים';
+      logger.debug(`-> ${regLog} | ${msg}`);
       ctx.reply(msg);
-      return;
+    } catch (e) {
+      const msg = 'יש אולי בעיה בשרת, המפתח קיבל התראה על כך ויתקן.';
+      ctx.reply(msg);
     }
-    await crud.subscribers.register({
-      chat_id: ctx.message.chat.id,
-      fullname: `${ctx.message.from?.first_name || ''} ${ctx.message.from?.last_name || ''}`,
-      username: ctx.message.from?.username || '',
-      cities: [],
-    });
-    const msg =
-      'ברוך הבא לבוט צבע אדום לקבלת התרעות ייחודיות לפי בחירה.\nמעל מנת להירשם להתראות על רשימת ערים, אנא לחץ על התפריט, ויפתח לך דף לרישום לערים';
-    logger.debug(`-> ${regLog} | ${msg}`);
-    ctx.reply(msg);
   });
 
   bot.command('list', async ctx => {
-    const regLog = `/list | chat.id=${ctx.message.chat.id}`;
+    const chatId = ctx.message.chat.id;
+    const regLog = `/list | chatId=${chatId}`;
 
     try {
-      const cities = await crud.subscribers.getCitiesByChatId(ctx.message.chat.id);
+      const cities = await crud.subscribers.getCitiesByChatId(chatId);
       if (!cities.length) {
         const msg =
           'טרם נרשמת לערים מסוימות לקבלת התראות. לחץ על התפריט, ויפתח לך עמוד לרישום לערים';
@@ -52,13 +65,14 @@ async function main() {
       return;
     } catch (e) {
       const msg =
-        'טרם נרשמת לערים מסוימות לקבלת התראות. זכור להירשם באמצעות /register, ואח"כ על מנת להירשם להתראות על רשימת ערים, אנא לחץ על התפריט, ויפתח לך עמוד לרישום לערים';
+        'טרם נרשמת לערים מסוימות לקבלת התראות. זכור להירשם באמצעות /start, ואח"כ על מנת להירשם להתראות על רשימת ערים, אנא לחץ על התפריט, ויפתח לך עמוד לרישום לערים';
       ctx.reply(msg);
     }
   });
 
   bot.command('about', async ctx => {
-    const regLog = `/about | chat.id=${ctx.message.chat.id}`;
+    const chatId = ctx.message.chat.id;
+    const regLog = `/about | chatId=${chatId}`;
     const msg = `בוט התראות צבע אדום\nנועד לאפשר קבלת התראות בהתאמה אישית לפי רשימת ערים שאת/ה בוחר/ת\n\nמפתח: ${env.AUTHOR}`;
     logger.debug(`<- ${regLog}`);
     ctx.reply(msg);
