@@ -94,6 +94,11 @@ async function main() {
     bot.telegram.sendMessage(sub.chat_id, msg);
   });
 
+  bot.catch(e => {
+    logger.error(JSON.stringify({ msg: 'bot error', e }));
+    throw e;
+  });
+
   // Enable graceful stop
   process.once('SIGINT', () => bot.stop('SIGINT'));
   process.once('SIGTERM', () => bot.stop('SIGTERM'));
